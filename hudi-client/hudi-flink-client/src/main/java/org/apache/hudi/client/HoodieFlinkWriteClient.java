@@ -57,6 +57,7 @@ import org.apache.hudi.io.MiniBatchHandle;
 import org.apache.hudi.metadata.FlinkHoodieBackedTableMetadataWriter;
 import org.apache.hudi.metadata.HoodieBackedTableMetadataWriter;
 import org.apache.hudi.table.BulkInsertPartitioner;
+import org.apache.hudi.table.HoodieFlinkCopyOnWriteTable;
 import org.apache.hudi.table.HoodieFlinkTable;
 import org.apache.hudi.table.HoodieTable;
 import org.apache.hudi.table.action.HoodieWriteMetadata;
@@ -258,6 +259,20 @@ public class HoodieFlinkWriteClient<T extends HoodieRecordPayload> extends
         initTable(WriteOperationType.DELETE, Option.ofNullable(instantTime));
     preWrite(instantTime, WriteOperationType.DELETE, table.getMetaClient());
     HoodieWriteMetadata<List<WriteStatus>> result = table.delete(context, instantTime, keys);
+    return postWrite(result, instantTime, table);
+  }
+
+  public List<WriteStatus> deletePartitions(List<String> partitions, String instantTime) {
+    HoodieTable<T, List<HoodieRecord<T>>, List<HoodieKey>, List<WriteStatus>> table =
+            initTable(WriteOperationType.DELETE_PARTITION, Option.ofNullable(instantTime));
+    preWrite(instantTime, WriteOperationType.DELETE_PARTITION, table.getMetaClient());
+
+    if(!(table instanceof HoodieFlinkCopyOnWriteTable
+            && HoodieIndex.IndexType.BUCKET.equals(table.getConfig().getIndexType()))) {
+      throw new HoodieNotSupportedException("deletePartitions just support cow and bulket index");
+    }
+
+    HoodieWriteMetadata<List<WriteStatus>> result = table.deletePartitions(context, instantTime, partitions);
     return postWrite(result, instantTime, table);
   }
 

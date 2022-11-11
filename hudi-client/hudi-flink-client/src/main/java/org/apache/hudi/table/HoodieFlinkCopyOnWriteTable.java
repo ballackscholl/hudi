@@ -56,14 +56,7 @@ import org.apache.hudi.table.action.bootstrap.HoodieBootstrapWriteMetadata;
 import org.apache.hudi.table.action.clean.CleanActionExecutor;
 import org.apache.hudi.table.action.clean.CleanPlanActionExecutor;
 import org.apache.hudi.table.action.cluster.ClusteringPlanActionExecutor;
-import org.apache.hudi.table.action.commit.FlinkDeleteCommitActionExecutor;
-import org.apache.hudi.table.action.commit.FlinkInsertCommitActionExecutor;
-import org.apache.hudi.table.action.commit.FlinkInsertOverwriteCommitActionExecutor;
-import org.apache.hudi.table.action.commit.FlinkInsertOverwriteTableCommitActionExecutor;
-import org.apache.hudi.table.action.commit.FlinkInsertPreppedCommitActionExecutor;
-import org.apache.hudi.table.action.commit.FlinkMergeHelper;
-import org.apache.hudi.table.action.commit.FlinkUpsertCommitActionExecutor;
-import org.apache.hudi.table.action.commit.FlinkUpsertPreppedCommitActionExecutor;
+import org.apache.hudi.table.action.commit.*;
 import org.apache.hudi.table.action.rollback.BaseRollbackPlanActionExecutor;
 import org.apache.hudi.table.action.rollback.CopyOnWriteRollbackActionExecutor;
 
@@ -244,7 +237,7 @@ public class HoodieFlinkCopyOnWriteTable<T extends HoodieRecordPayload>
 
   @Override
   public HoodieWriteMetadata deletePartitions(HoodieEngineContext context, String instantTime, List<String> partitions) {
-    throw new HoodieNotSupportedException("DeletePartitions is not supported yet");
+    return new FlinkDeletePartitionCommitActionExecutor<>(context, config, this, instantTime, partitions).execute();
   }
 
   @Override
