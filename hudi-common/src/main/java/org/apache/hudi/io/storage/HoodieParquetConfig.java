@@ -35,6 +35,7 @@ public class HoodieParquetConfig<T> {
   private final double compressionRatio;
   private final boolean dictionaryEnabled;
 
+
   private int maxRowCountForPageSizeCheck;
 
   private int minRowCountForPageSizeCheck;
