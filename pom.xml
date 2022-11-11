@@ -781,6 +781,7 @@
           <configuration>
             <protocArtifact>com.google.protobuf:protoc:${proto.version}</protocArtifact>
             <protocVersion>${protoc.version}</protocVersion>
+            <protocCommand>${user.home}/opt/proto3.21.5/bin/protoc</protocCommand>
             <includeStdTypes>true</includeStdTypes>
           </configuration>
         </plugin>

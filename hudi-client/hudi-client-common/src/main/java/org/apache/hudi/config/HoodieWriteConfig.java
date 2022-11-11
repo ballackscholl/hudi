@@ -744,6 +744,23 @@ public class HoodieWriteConfig extends HoodieConfig {
   private ConsistencyGuardConfig consistencyGuardConfig;
   private FileSystemRetryConfig fileSystemRetryConfig;
 
+  public static final ConfigProperty<Boolean> PARQUET_USE_RICH_ROWDATA_WRITER = ConfigProperty
+          .key("hoodie.parquet.rich.rowdata.writer")
+          .defaultValue(false)
+          .sinceVersion("0.12.1")
+          .withDocumentation("while use HoodieRowDataParquetRichWriter has rich config");
+
+
+  public static final ConfigProperty<Integer> PARQUET_MAXROWCOUNT_CHECK_PAGESIZE = ConfigProperty
+          .key("hoodie.parquet_maxrowcount_check_pagesize")
+          .defaultValue(1000)
+          .sinceVersion("0.12.1");
+
+  public static final ConfigProperty<Integer> PARQUET_MINROWCOUNT_CHECK_PAGESIZE = ConfigProperty
+          .key("hoodie.parquet_minrowcount_check_pagesize")
+          .defaultValue(100)
+          .sinceVersion("0.12.1");
+
   // Hoodie Write Client transparently rewrites File System View config when embedded mode is enabled
   // We keep track of original config and rewritten config
   private final FileSystemViewStorageConfig clientSpecifiedViewStorageConfig;

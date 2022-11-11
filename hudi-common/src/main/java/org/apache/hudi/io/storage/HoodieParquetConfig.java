@@ -35,6 +35,10 @@ public class HoodieParquetConfig<T> {
   private final double compressionRatio;
   private final boolean dictionaryEnabled;
 
+  private int maxRowCountForPageSizeCheck;
+
+  private int minRowCountForPageSizeCheck;
+
   public HoodieParquetConfig(T writeSupport, CompressionCodecName compressionCodecName, int blockSize,
                              int pageSize, long maxFileSize, Configuration hadoopConf, double compressionRatio, boolean dictionaryEnabled) {
     this.writeSupport = writeSupport;
@@ -45,6 +49,16 @@ public class HoodieParquetConfig<T> {
     this.hadoopConf = hadoopConf;
     this.compressionRatio = compressionRatio;
     this.dictionaryEnabled = dictionaryEnabled;
+    this.maxRowCountForPageSizeCheck = 1000;
+    this.minRowCountForPageSizeCheck = 100;
+  }
+
+  public HoodieParquetConfig(T writeSupport, CompressionCodecName compressionCodecName, int blockSize,
+                             int pageSize, long maxFileSize, Configuration hadoopConf, double compressionRatio,
+                             int minRowCountForPageSizeCheck, int maxRowCountForPageSizeCheck, boolean dictionaryEnabled) {
+    this(writeSupport, compressionCodecName, blockSize, pageSize, maxFileSize, hadoopConf, compressionRatio, dictionaryEnabled);
+    this.maxRowCountForPageSizeCheck = maxRowCountForPageSizeCheck;
+    this.minRowCountForPageSizeCheck = minRowCountForPageSizeCheck;
   }
 
   public CompressionCodecName getCompressionCodecName() {
@@ -78,4 +92,28 @@ public class HoodieParquetConfig<T> {
   public boolean dictionaryEnabled() {
     return dictionaryEnabled;
   }
+
+  public int getMaxRowCountForPageSizeCheck() {
+    return maxRowCountForPageSizeCheck;
+  }
+
+  public int getMinRowCountForPageSizeCheck() {
+    return minRowCountForPageSizeCheck;
+  }
+
+  @Override
+  public String toString() {
+    return "HoodieParquetConfig{" +
+            ", compressionCodecName=" + compressionCodecName +
+            ", blockSize=" + blockSize +
+            ", pageSize=" + pageSize +
+            ", maxFileSize=" + maxFileSize +
+            ", compressionRatio=" + compressionRatio +
+            ", dictionaryEnabled=" + dictionaryEnabled +
+            ", maxRowCountForPageSizeCheck=" + maxRowCountForPageSizeCheck +
+            ", minRowCountForPageSizeCheck=" + minRowCountForPageSizeCheck +
+            '}';
+  }
+
 }
+
