@@ -504,6 +504,24 @@ public class HoodieWriteConfig extends HoodieConfig {
       .withDocumentation("When table is upgraded from pre 0.12 to 0.12, we check for \"default\" partition and fail if found one. "
           + "Users are expected to rewrite the data in those partitions. Enabling this config will bypass this validation");
 
+  public static final ConfigProperty<Boolean> PARQUET_USE_RICH_ROWDATA_WRITER = ConfigProperty
+          .key("hoodie.parquet.rich.rowdata.writer")
+          .defaultValue(false)
+          .sinceVersion("0.12.1")
+          .withDocumentation("while use HoodieRowDataParquetRichWriter has rich config");
+
+
+  public static final ConfigProperty<Integer> PARQUET_MAXROWCOUNT_CHECK_PAGESIZE = ConfigProperty
+          .key("hoodie.parquet_maxrowcount_check_pagesize")
+          .defaultValue(1000)
+          .sinceVersion("0.12.1");
+
+  public static final ConfigProperty<Integer> PARQUET_MINROWCOUNT_CHECK_PAGESIZE = ConfigProperty
+          .key("hoodie.parquet_minrowcount_check_pagesize")
+          .defaultValue(100)
+          .sinceVersion("0.12.1");
+
+
   private ConsistencyGuardConfig consistencyGuardConfig;
   private FileSystemRetryConfig fileSystemRetryConfig;
 
