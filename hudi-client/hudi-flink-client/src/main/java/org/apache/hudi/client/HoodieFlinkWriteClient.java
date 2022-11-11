@@ -267,8 +267,7 @@ public class HoodieFlinkWriteClient<T extends HoodieRecordPayload> extends
             initTable(WriteOperationType.DELETE_PARTITION, Option.ofNullable(instantTime));
     preWrite(instantTime, WriteOperationType.DELETE_PARTITION, table.getMetaClient());
 
-    if(!(table instanceof HoodieFlinkCopyOnWriteTable
-            && HoodieIndex.IndexType.BUCKET.equals(table.getConfig().getIndexType()))) {
+    if(!(table instanceof HoodieFlinkCopyOnWriteTable)) {
       throw new HoodieNotSupportedException("deletePartitions just support cow and bulket index");
     }
 
