@@ -19,6 +19,7 @@
 package org.apache.hudi.table.format.cow;
 
 import java.util.Comparator;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hudi.common.fs.FSUtils;
 import org.apache.hudi.table.format.cow.vector.reader.ParquetColumnarRowSplitReader;
 import org.apache.hudi.util.DataTypeUtils;
@@ -47,6 +48,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+
+import static org.apache.hudi.configuration.FlinkOptions.READ_PARQUEST_BATCHSIZE;
 
 /**
  * An implementation of {@link FileInputFormat} to read {@link RowData} records
@@ -122,7 +126,17 @@ public class CopyOnWriteInputFormat extends FileInputFormat<RowData> {
         partObjects.put(k, DataTypeUtils.resolvePartition(partDefaultName.equals(v) ? null : v, fieldType));
       }
     });
-    LOG.info("CopyOnWriteInputFormat genPartColumnarRowReader fileSplit: {} batchsize {}", fileSplit, 4);
+
+    int parquetBatchSize = READ_PARQUEST_BATCHSIZE.defaultValue();
+
+    Map<String, String> parameters = this.getRuntimeContext().getExecutionConfig().getGlobalJobParameters().toMap();
+    String parquetBatchSizeStr = parameters.get(READ_PARQUEST_BATCHSIZE.key());
+
+    if(StringUtils.isNotBlank(parquetBatchSizeStr)) {
+      parquetBatchSize = Integer.parseInt(parquetBatchSizeStr);
+    }
+
+    LOG.info("CopyOnWriteInputFormat genPartColumnarRowReader fileSplit: {} batchsize: {}", fileSplit, parquetBatchSize);
     this.reader = ParquetSplitReaderUtil.genPartColumnarRowReader(
         utcTimestamp,
         true,
@@ -131,7 +145,7 @@ public class CopyOnWriteInputFormat extends FileInputFormat<RowData> {
         fullFieldTypes,
         partObjects,
         selectedFields,
-        4,
+        parquetBatchSize,
         fileSplit.getPath(),
         fileSplit.getStart(),
         fileSplit.getLength());

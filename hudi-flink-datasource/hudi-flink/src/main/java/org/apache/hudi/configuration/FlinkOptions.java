@@ -282,6 +282,12 @@ public class FlinkOptions extends HoodieConfig {
       .withDescription("Enables data-skipping allowing queries to leverage indexes to reduce the search space by"
           + "skipping over files");
 
+  public static final ConfigOption<Integer> READ_PARQUEST_BATCHSIZE = ConfigOptions
+      .key("read.parquest.batchsize")
+      .intType()
+      .defaultValue(2048)
+      .withDescription("config read parquest batchsize");
+
   // ------------------------------------------------------------------------
   //  Write Options
   // ------------------------------------------------------------------------
