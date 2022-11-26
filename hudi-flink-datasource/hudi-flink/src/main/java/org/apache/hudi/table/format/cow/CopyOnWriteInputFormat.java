@@ -122,7 +122,7 @@ public class CopyOnWriteInputFormat extends FileInputFormat<RowData> {
         partObjects.put(k, DataTypeUtils.resolvePartition(partDefaultName.equals(v) ? null : v, fieldType));
       }
     });
-
+    LOG.info("CopyOnWriteInputFormat genPartColumnarRowReader fileSplit: {} batchsize {}", fileSplit, 4);
     this.reader = ParquetSplitReaderUtil.genPartColumnarRowReader(
         utcTimestamp,
         true,
@@ -131,7 +131,7 @@ public class CopyOnWriteInputFormat extends FileInputFormat<RowData> {
         fullFieldTypes,
         partObjects,
         selectedFields,
-        2048,
+        4,
         fileSplit.getPath(),
         fileSplit.getStart(),
         fileSplit.getLength());
