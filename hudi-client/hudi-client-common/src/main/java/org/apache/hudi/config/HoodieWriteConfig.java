@@ -728,6 +728,24 @@ public class HoodieWriteConfig extends HoodieConfig {
           + "The class must be a subclass of `org.apache.hudi.callback.HoodieClientInitCallback`."
           + "By default, no Hudi client init callback is executed.");
 
+  public static final ConfigProperty<Boolean> PARQUET_USE_RICH_ROWDATA_WRITER = ConfigProperty
+          .key("hoodie.parquet.rich.rowdata.writer")
+          .defaultValue(false)
+          .sinceVersion("0.12.1")
+          .withDocumentation("while use HoodieRowDataParquetRichWriter has rich config");
+
+
+  public static final ConfigProperty<Integer> PARQUET_MAXROWCOUNT_CHECK_PAGESIZE = ConfigProperty
+          .key("hoodie.parquet_maxrowcount_check_pagesize")
+          .defaultValue(1000)
+          .sinceVersion("0.12.1");
+
+  public static final ConfigProperty<Integer> PARQUET_MINROWCOUNT_CHECK_PAGESIZE = ConfigProperty
+          .key("hoodie.parquet_minrowcount_check_pagesize")
+          .defaultValue(100)
+          .sinceVersion("0.12.1");
+
+
   /**
    * Config key with boolean value that indicates whether record being written during MERGE INTO Spark SQL
    * operation are already prepped.
