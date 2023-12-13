@@ -33,7 +33,7 @@ public class HoodieRowDataParquetRichWriter implements HoodieRowDataFileWriter {
 
     public HoodieRowDataParquetRichWriter(Path file, HoodieParquetConfig<HoodieRowDataParquetWriteSupport> parquetConfig) throws IOException {
 
-        logger.info("{} will use  HoodieRowDataParquetRichWriter profile:{}", file, parquetConfig);
+        logger.info("{} will use  HoodieRowDataParquetRichWriter config:{}", file, parquetConfig);
 
         this.file = HoodieWrapperFileSystem.convertToHoodiePath(file, parquetConfig.getHadoopConf());
         this.fs = (HoodieWrapperFileSystem) this.file.getFileSystem(FSUtils.registerFileSystem(file,
@@ -51,7 +51,7 @@ public class HoodieRowDataParquetRichWriter implements HoodieRowDataFileWriter {
                 .withMaxPaddingSize(ParquetWriter.MAX_PADDING_SIZE_DEFAULT)
                 .withPageSize(parquetConfig.getPageSize())
                 .withDictionaryPageSize(parquetConfig.getPageSize())
-                .withDictionaryEncoding(ParquetWriter.DEFAULT_IS_DICTIONARY_ENABLED)
+                .withDictionaryEncoding(parquetConfig.dictionaryEnabled())
                 .withWriterVersion(ParquetWriter.DEFAULT_WRITER_VERSION)
                 .withEncryption(null);
 
