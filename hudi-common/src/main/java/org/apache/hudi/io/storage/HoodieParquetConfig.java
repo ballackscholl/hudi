@@ -101,4 +101,19 @@ public class HoodieParquetConfig<T> {
     return minRowCountForPageSizeCheck;
   }
 
+  @Override
+  public String toString() {
+    return "HoodieParquetConfig{" +
+            "writeSupport=" + writeSupport +
+            ", compressionCodecName=" + compressionCodecName +
+            ", blockSize=" + blockSize +
+            ", pageSize=" + pageSize +
+            ", maxFileSize=" + maxFileSize +
+            ", hadoopConf=" + hadoopConf +
+            ", compressionRatio=" + compressionRatio +
+            ", dictionaryEnabled=" + dictionaryEnabled +
+            ", maxRowCountForPageSizeCheck=" + maxRowCountForPageSizeCheck +
+            ", minRowCountForPageSizeCheck=" + minRowCountForPageSizeCheck +
+            '}';
+  }
 }
