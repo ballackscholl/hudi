@@ -39,7 +39,6 @@ public class HoodieParquetConfig<T> {
 
   private int minRowCountForPageSizeCheck;
 
-
   public HoodieParquetConfig(T writeSupport, CompressionCodecName compressionCodecName, int blockSize,
                              int pageSize, long maxFileSize, Configuration hadoopConf, double compressionRatio, boolean dictionaryEnabled) {
     this.writeSupport = writeSupport;
@@ -94,7 +93,6 @@ public class HoodieParquetConfig<T> {
     return dictionaryEnabled;
   }
 
-
   public int getMaxRowCountForPageSizeCheck() {
     return maxRowCountForPageSizeCheck;
   }
@@ -102,6 +100,5 @@ public class HoodieParquetConfig<T> {
   public int getMinRowCountForPageSizeCheck() {
     return minRowCountForPageSizeCheck;
   }
-
 
 }
