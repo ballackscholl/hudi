@@ -109,7 +109,7 @@ public class Pipelines {
    * @param dataStream The input data stream
    * @return the bulk insert data stream sink
    */
-  public static DataStreamSink<Object> bulkInsert(Configuration conf, RowType rowType, DataStream<RowData> dataStream) {
+  public static DataStreamSink<Object> bulkInsert(Configuration conf, RowType rowType, DataStream<RowData> dataStream, SinkFunction<Object> bulkSinkFunction) {
     WriteOperatorFactory<RowData> operatorFactory = BulkInsertWriteOperator.getFactory(conf, rowType);
     if (OptionsResolver.isBucketIndexType(conf)) {
       // TODO support bulk insert for consistent bucket index
@@ -136,12 +136,22 @@ public class Pipelines {
         ExecNodeUtil.setManagedMemoryWeight(dataStream.getTransformation(),
             conf.getInteger(FlinkOptions.WRITE_SORT_MEMORY) * 1024L * 1024L);
       }
-      return dataStream
-          .transform(opName("bucket_bulk_insert", conf), TypeInformation.of(Object.class), operatorFactory)
-          .uid(opUID("bucket_bulk_insert", conf))
-          .setParallelism(conf.getInteger(FlinkOptions.WRITE_TASKS))
-          .addSink(DummySink.INSTANCE)
-          .name("dummy");
+
+      if(bulkSinkFunction != null) {
+        return dataStream
+                .transform(opName("bucket_bulk_insert", conf), TypeInformation.of(Object.class), operatorFactory)
+                .uid(opUID("bucket_bulk_insert", conf))
+                .setParallelism(conf.getInteger(FlinkOptions.WRITE_TASKS))
+                .addSink(bulkSinkFunction).setParallelism(1)
+                .name("bulk-cover");
+      } else {
+        return dataStream
+                .transform(opName("bucket_bulk_insert", conf), TypeInformation.of(Object.class), operatorFactory)
+                .uid(opUID("bucket_bulk_insert", conf))
+                .setParallelism(conf.getInteger(FlinkOptions.WRITE_TASKS))
+                .addSink(DummySink.INSTANCE)
+                .name("dummy");
+      }
     }
 
     final String[] partitionFields = FilePathUtils.extractPartitionKeys(conf);
@@ -177,14 +187,27 @@ public class Pipelines {
             conf.getInteger(FlinkOptions.WRITE_SORT_MEMORY) * 1024L * 1024L);
       }
     }
-    return dataStream
-        .transform(opName("hoodie_bulk_insert_write", conf),
-            TypeInformation.of(Object.class),
-            operatorFactory)
-        // follow the parallelism of upstream operators to avoid shuffle
-        .setParallelism(conf.getInteger(FlinkOptions.WRITE_TASKS))
-        .addSink(DummySink.INSTANCE)
-        .name("dummy");
+    if(bulkSinkFunction != null) {
+      return dataStream
+              .transform(opName("hoodie_bulk_insert_write", conf),
+                      TypeInformation.of(Object.class),
+                      operatorFactory)
+              // follow the parallelism of upstream operators to avoid shuffle
+              .setParallelism(conf.getInteger(FlinkOptions.WRITE_TASKS))
+              .addSink(bulkSinkFunction).setParallelism(1)
+              .name("bulk-cover");
+
+    } else {
+      return dataStream
+              .transform(opName("hoodie_bulk_insert_write", conf),
+                      TypeInformation.of(Object.class),
+                      operatorFactory)
+              // follow the parallelism of upstream operators to avoid shuffle
+              .setParallelism(conf.getInteger(FlinkOptions.WRITE_TASKS))
+              .addSink(DummySink.INSTANCE)
+              .name("dummy");
+    }
+
   }
 
   /**

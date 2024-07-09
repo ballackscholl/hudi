@@ -18,6 +18,7 @@
 
 package org.apache.hudi.table;
 
+import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.hudi.adapter.DataStreamSinkProviderAdapter;
 import org.apache.hudi.adapter.SupportsRowLevelDeleteAdapter;
 import org.apache.hudi.adapter.SupportsRowLevelUpdateAdapter;
@@ -91,7 +92,13 @@ public class HoodieTableSink implements
           throw new HoodieException(
               "The bulk insert should be run in batch execution mode.");
         }
-        return Pipelines.bulkInsert(conf, rowType, dataStream);
+
+        SinkFunction<Object> bulkSinkFunction = null;
+        if(context instanceof BulkSinkRuntimeProviderContext) {
+          bulkSinkFunction = ((BulkSinkRuntimeProviderContext)context).getSinkFunction();
+        }
+
+        return Pipelines.bulkInsert(conf, rowType, dataStream, bulkSinkFunction);
       }
 
       // Append mode

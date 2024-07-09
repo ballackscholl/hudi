@@ -188,7 +188,7 @@ public class ITTestConsistentBucketStreamWrite extends TestLogger {
     DataStream<HoodieRecord> hoodieRecordDataStream = Pipelines.bootstrap(conf, rowType, dataStream);
     // bulk_insert mode
     if (OptionsResolver.isBulkInsertOperation(conf)) {
-      Pipelines.bulkInsert(conf, rowType, dataStream);
+      Pipelines.bulkInsert(conf, rowType, dataStream, null);
     } else {
       DataStream<Object> pipeline = Pipelines.hoodieStreamWrite(conf, hoodieRecordDataStream);
       execEnv.addOperator(pipeline.getTransformation());
