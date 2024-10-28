@@ -208,7 +208,7 @@ public class HoodieAppendHandle<T, I, K, O> extends HoodieWriteHandle<T, I, K, O
         HoodiePartitionMetadata partitionMetadata = new HoodiePartitionMetadata(fs, baseInstantTime,
             new Path(config.getBasePath()), FSUtils.getPartitionPath(config.getBasePath(), partitionPath),
             hoodieTable.getPartitionMetafileFormat());
-        partitionMetadata.trySave(getPartitionId());
+        partitionMetadata.trySave(writeToken);
 
         // Since the actual log file written to can be different based on when rollover happens, we use the
         // base file to denote some log appends happened on a slice. writeToken will still fence concurrent

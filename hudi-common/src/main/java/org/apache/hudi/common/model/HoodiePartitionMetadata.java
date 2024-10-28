@@ -20,10 +20,7 @@ package org.apache.hudi.common.model;
 
 import org.apache.hudi.avro.HoodieAvroUtils;
 import org.apache.hudi.avro.HoodieAvroWriteSupport;
-import org.apache.hudi.common.util.AvroOrcUtils;
-import org.apache.hudi.common.util.BaseFileUtils;
-import org.apache.hudi.common.util.Option;
-import org.apache.hudi.common.util.StringUtils;
+import org.apache.hudi.common.util.*;
 import org.apache.hudi.exception.HoodieException;
 import org.apache.hudi.exception.HoodieIOException;
 
@@ -105,10 +102,9 @@ public class HoodiePartitionMetadata {
   /**
    * Write the metadata safely into partition atomically.
    */
-  public void trySave(int taskPartitionId) {
+  public void trySave(String writeToken) throws IOException {
     String extension = getMetafileExtension();
-    Path tmpMetaPath =
-        new Path(partitionPath, HoodiePartitionMetadata.HOODIE_PARTITION_METAFILE_PREFIX + "_" + taskPartitionId + extension);
+    Path tmpMetaPath = new Path(partitionPath, HoodiePartitionMetadata.HOODIE_PARTITION_METAFILE_PREFIX + "_" + writeToken + extension);
     Path metaPath = new Path(partitionPath, HoodiePartitionMetadata.HOODIE_PARTITION_METAFILE_PREFIX + extension);
     boolean metafileExists = false;
 
@@ -121,8 +117,8 @@ public class HoodiePartitionMetadata {
         fs.rename(tmpMetaPath, metaPath);
       }
     } catch (IOException ioe) {
-      LOG.warn("Error trying to save partition metadata (this is okay, as long as at least 1 of these succeeded), "
-          + partitionPath, ioe);
+      LOG.error("Error trying to save partition metadata, " + partitionPath);
+      throw ioe;
     } finally {
       if (!metafileExists) {
         try {

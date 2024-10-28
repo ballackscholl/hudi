@@ -493,7 +493,7 @@ public class InputFormatTestUtil {
               new Path(partitionPath.toAbsolutePath().toString()),
               Option.of(HoodieFileFormat.PARQUET));
 
-      partitionMetadata.trySave((int) (Math.random() * 1000));
+      partitionMetadata.trySave(String.valueOf(Math.random() * 1000));
     }
   }
 
